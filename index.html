@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F7F9F5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi día · Jami">
+<title>Mi día · Jami</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F7F9F5;
+  --white: #FFFFFF;
+  --text: #1F2D22;
+  --text-soft: #4A6350;
+  --text-muted: #8AA890;
+  --border: rgba(31,45,34,0.08);
+
+  --pedidos-dot: #7BA7C4;
+  --pedidos-bg: #EDF4F9;
+  --materiales-dot: #B8A46E;
+  --materiales-bg: #F9F5EC;
+  --hogar-dot: #8FBA8A;
+  --hogar-bg: #EEF5ED;
+  --familia-dot: #C48FA0;
+  --familia-bg: #F9EEF2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans', sans-serif; color: var(--text); }
+.app { max-width: 860px; margin: 0 auto; padding: 0 0 7rem; }
+
+/* HEADER */
+.top { padding: 2rem 2rem 1.5rem; }
+.date-small { font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.greeting { font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1.3; color: var(--text); }
+.greeting em { font-style: italic; color: var(--text-soft); }
+
+/* SECTIONS */
+.section { display: none; padding: 0 2rem; }
+.section.visible { display: block; }
+
+/* 4 COLUMNS */
+.four-col { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+@media(max-width:720px){ .four-col { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:420px){ .four-col { grid-template-columns: 1fr; } }
+
+/* CATEGORY CARDS */
+.col-card { background: var(--white); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; }
+.col-head { padding: 14px 16px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.col-icon { font-size: 20px; line-height: 1; }
+.col-title { font-size: 13px; font-weight: 500; color: var(--text-soft); flex: 1; }
+.col-count { font-size: 12px; color: var(--text-muted); }
+.col-body { padding: 10px 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+
+/* TASK ITEMS */
+.task-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 11px; border-radius: 14px; background: var(--cream); border: 1px solid transparent; transition: border-color 0.15s; }
+.task-item:hover { border-color: var(--border); }
+.task-item.done-item { opacity: 0.38; }
+
+.check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--text-muted); flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-top: 1px; }
+.col-card.pedidos  .check.done { background: var(--pedidos-dot);   border-color: var(--pedidos-dot); }
+.col-card.materiales .check.done { background: var(--materiales-dot); border-color: var(--materiales-dot); }
+.col-card.hogar    .check.done { background: var(--hogar-dot);    border-color: var(--hogar-dot); }
+.col-card.familia  .check.done { background: var(--familia-dot);  border-color: var(--familia-dot); }
+.check.done::after { content:''; display:block; width:5px; height:9px; border:2px solid white; border-top:none; border-left:none; transform:rotate(45deg) translateY(-1px); }
+
+.task-info { flex:1; min-width:0; }
+.task-text { font-size: 14px; color: var(--text); line-height: 1.4; word-break: break-word; }
+.done-item .task-text { text-decoration: line-through; }
+.task-meta { display:flex; gap:5px; margin-top:3px; }
+.task-time { font-size: 11px; color: var(--text-muted); }
+.rec-badge { font-size: 11px; color: var(--text-muted); }
+.del-btn { background:none; border:none; color:var(--text-muted); font-size:16px; cursor:pointer; opacity:0; padding:0; flex-shrink:0; margin-top:2px; transition:opacity 0.15s; }
+.task-item:hover .del-btn { opacity:1; }
+.col-empty { font-size:13px; color:var(--text-muted); font-style:italic; padding:4px 2px; }
+
+/* BOTTOM SECTION */
+.bottom-section { margin-top:1.75rem; display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+@media(max-width:580px){ .bottom-section { grid-template-columns:1fr; } }
+
+.info-card { background:var(--white); border-radius:18px; border:1px solid var(--border); padding:20px 22px; }
+.info-title { font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:14px; }
+
+/* TOMORROW */
+.tmr-item { display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--border); font-size:14px; color:var(--text-soft); line-height:1.4; }
+.tmr-item:last-child { border-bottom:none; padding-bottom:0; }
+.tmr-item:first-child { padding-top:0; }
+.tmr-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.tmr-dot.pedidos   { background:var(--pedidos-dot); }
+.tmr-dot.materiales{ background:var(--materiales-dot); }
+.tmr-dot.hogar     { background:var(--hogar-dot); }
+.tmr-dot.familia   { background:var(--familia-dot); }
+.tmr-time { font-size:12px; color:var(--text-muted); flex-shrink:0; min-width:36px; }
+
+/* WEATHER */
+.weather-header { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+.weather-icon { font-size:36px; line-height:1; }
+.weather-temp-main { font-family:'DM Serif Display',serif; font-size:34px; color:var(--text); line-height:1; }
+.weather-desc { font-size:13px; color:var(--text-soft); margin-top:2px; }
+.weather-row { display:flex; justify-content:space-between; padding:7px 0; border-top:1px solid var(--border); font-size:13px; color:var(--text-soft); }
+.weather-val { color:var(--text-muted); }
+.weather-advice { font-size:13px; color:var(--text-soft); padding-top:7px; border-top:1px solid var(--border); line-height:1.5; }
+.weather-loading { font-size:13px; color:var(--text-muted); font-style:italic; }
+
+/* DESCANSO BUTTON — suave, no de pánico */
+.descanso-btn { display:flex; align-items:center; justify-content:center; width:100%; background:var(--hogar-bg); border:1.5px solid rgba(143,186,138,0.4); border-radius:16px; padding:14px 24px; font-family:'DM Serif Display',serif; font-size:16px; font-style:italic; color:var(--text-soft); cursor:pointer; transition:all 0.2s; margin-top:1.75rem; }
+.descanso-btn:hover { background:#E3EFE2; border-color:rgba(143,186,138,0.7); }
+.descanso-btn:active { transform:scale(0.98); }
+
+/* NOTES */
+.notes-card { background:var(--white); border-radius:18px; border:1px solid var(--border); padding:18px 20px; margin-top:1.25rem; }
+.notes-label { font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; }
+.notes-area { width:100%; min-height:80px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text); background:transparent; border:none; outline:none; resize:none; line-height:1.6; }
+.notes-area::placeholder { color:var(--text-muted); }
+.save-note-btn { width:100%; margin-top:12px; padding:11px; border-radius:12px; border:1.5px solid rgba(31,45,34,0.15); background:var(--cream); color:var(--text-soft); font-family:inherit; font-size:13px; cursor:pointer; transition:all 0.2s; }
+.save-note-btn:hover { background:var(--white); color:var(--text); }
+.notes-saved { font-size:11px; color:var(--text-muted); margin-top:6px; font-style:italic; }
+
+/* ALL DONE */
+.alldone-toast-msg { display:none; }
+
+/* RECURRING */
+.rec-list { display:flex; flex-direction:column; gap:8px; margin-bottom:1rem; }
+.rec-item { background:var(--white); border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px; border:1px solid var(--border); }
+.rec-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.rec-dot.pedidos   { background:var(--pedidos-dot); }
+.rec-dot.materiales{ background:var(--materiales-dot); }
+.rec-dot.hogar     { background:var(--hogar-dot); }
+.rec-dot.familia   { background:var(--familia-dot); }
+.rec-info { flex:1; }
+.rec-name { font-size:14px; color:var(--text); }
+.rec-meta { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.rec-del { background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; }
+
+/* CALENDAR */
+.cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.cal-nav { background:none; border:none; font-size:22px; color:var(--text-soft); cursor:pointer; padding:4px 12px; border-radius:10px; }
+.cal-nav:hover { background:var(--white); }
+.cal-month-label { font-family:'DM Serif Display',serif; font-size:22px; color:var(--text); }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.cal-dow { text-align:center; font-size:10px; letter-spacing:0.05em; text-transform:uppercase; color:var(--text-muted); padding:4px 0 8px; }
+.cal-cell { text-align:center; padding:10px 2px; font-size:13px; border-radius:10px; cursor:pointer; transition:background 0.15s; color:var(--text-soft); position:relative; }
+.cal-cell:hover { background:var(--white); }
+.cal-cell.today { background:var(--text); color:white; font-weight:500; }
+.cal-cell.other-month { color:var(--text-muted); opacity:0.4; }
+.cal-cell.selected:not(.today) { background:rgba(143,186,138,0.18); color:var(--text); }
+.day-events-card { background:var(--white); border-radius:18px; padding:16px; border:1px solid var(--border); margin-top:1.25rem; }
+.day-ev-title { font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px; }
+.ev-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+.ev-row:last-child { border-bottom:none; }
+.ev-time { font-size:11px; color:var(--text-muted); min-width:40px; }
+.ev-name { font-size:14px; color:var(--text); flex:1; }
+.ev-del { background:none; border:none; color:var(--text-muted); font-size:16px; cursor:pointer; }
+
+/* SAVED NOTES */
+.notes-section-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; }
+.notes-header-label { font-size:11px; color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:5px; }
+.notes-header-quote { font-family:'DM Serif Display',serif; font-size:18px; color:var(--text); font-style:italic; line-height:1.3; max-width:340px; }
+.note-fab { background:var(--text); color:white; border:none; border-radius:14px; padding:10px 18px; font-family:inherit; font-size:13px; cursor:pointer; flex-shrink:0; margin-left:1rem; margin-top:4px; }
+.note-items-grid { display:flex; flex-direction:column; gap:10px; }
+.note-item { background:var(--white); border-radius:18px; border:1px solid var(--border); padding:18px 20px; }
+.note-item-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.note-item-date { font-size:11px; color:var(--text-muted); }
+.note-item-text { font-size:14px; color:var(--text); line-height:1.65; white-space:pre-wrap; word-break:break-word; }
+.note-item-del { background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; padding:0; }
+.note-empty { font-size:14px; color:var(--text-muted); font-style:italic; padding:2rem 0; text-align:center; line-height:1.6; }
+.note-modal-backdrop { position:fixed; inset:0; background:rgba(31,45,34,0.25); z-index:250; display:none; align-items:flex-end; justify-content:center; }
+.note-modal-backdrop.open { display:flex; }
+@media(min-width:600px){ .note-modal-backdrop { align-items:center; } }
+.note-modal { background:var(--white); border-radius:24px 24px 0 0; padding:1.5rem; width:100%; max-width:560px; }
+@media(min-width:600px){ .note-modal { border-radius:24px; } }
+.note-modal-title { font-family:'DM Serif Display',serif; font-size:20px; color:var(--text); margin-bottom:1rem; }
+.note-modal-area { width:100%; min-height:160px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text); background:var(--cream); border:1px solid var(--border); border-radius:14px; padding:14px 16px; outline:none; resize:none; line-height:1.7; }
+
+/* FAB */
+.fab { position:fixed; bottom:5rem; right:1.75rem; width:52px; height:52px; border-radius:50%; background:var(--text); color:white; border:none; font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 18px rgba(31,45,34,0.18); transition:transform 0.22s; z-index:100; }
+.fab.open { transform:rotate(45deg); }
+
+/* MODAL */
+.modal-backdrop { position:fixed; inset:0; background:rgba(31,45,34,0.25); z-index:200; display:none; align-items:flex-end; justify-content:center; }
+.modal-backdrop.open { display:flex; }
+@media(min-width:600px){ .modal-backdrop { align-items:center; } }
+.modal { background:var(--white); border-radius:24px 24px 0 0; padding:1.5rem; width:100%; max-width:480px; }
+@media(min-width:600px){ .modal { border-radius:24px; } }
+.modal-title { font-family:'DM Serif Display',serif; font-size:20px; margin-bottom:1rem; color:var(--text); }
+.modal-tabs { display:flex; gap:6px; margin-bottom:1.25rem; flex-wrap:wrap; }
+.modal-tab { padding:7px 14px; border-radius:16px; font-size:13px; border:1px solid var(--border); background:var(--cream); color:var(--text-soft); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+.modal-tab.active { background:var(--text); color:white; border-color:transparent; }
+.modal-section { display:none; }
+.modal-section.visible { display:block; }
+.field { margin-bottom:12px; }
+.field label { display:block; font-size:12px; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+.field input, .field select { width:100%; font-family:inherit; font-size:14px; padding:11px 14px; border:1px solid var(--border); border-radius:12px; background:var(--cream); color:var(--text); outline:none; }
+.field input:focus, .field select:focus { border-color:var(--text-muted); }
+.days-row { display:flex; gap:6px; }
+.day-chip { width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--cream); font-size:13px; color:var(--text-soft); cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+.day-chip.sel { background:var(--text); color:white; border-color:transparent; }
+.modal-actions { display:flex; gap:8px; margin-top:1rem; }
+.btn-primary { flex:1; padding:12px; border-radius:12px; border:none; background:var(--text); color:white; font-family:inherit; font-size:14px; cursor:pointer; }
+.btn-ghost { padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:none; color:var(--text-soft); font-family:inherit; font-size:14px; cursor:pointer; }
+
+/* EXPORT */
+.exp-backdrop { position:fixed; inset:0; background:rgba(31,45,34,0.25); z-index:300; display:none; align-items:center; justify-content:center; padding:1rem; }
+.exp-backdrop.open { display:flex; }
+.exp-modal { background:var(--white); border-radius:20px; padding:1.5rem; width:100%; max-width:420px; }
+.exp-modal h3 { font-family:'DM Serif Display',serif; font-size:20px; margin-bottom:0.75rem; color:var(--text); }
+.exp-modal p { font-size:13px; color:var(--text-soft); margin-bottom:1rem; line-height:1.5; }
+.exp-modal textarea { width:100%; height:100px; font-size:11px; font-family:monospace; border:1px solid var(--border); border-radius:10px; padding:10px; background:var(--cream); color:var(--text); resize:none; outline:none; margin-bottom:10px; display:block; }
+
+/* BOTTOM BAR */
+.bottom-bar { position:fixed; bottom:0; left:0; right:0; background:rgba(247,249,245,0.96); backdrop-filter:blur(16px); border-top:1px solid var(--border); padding:0.75rem 1rem; display:flex; justify-content:center; align-items:center; gap:6px; z-index:50; overflow-x:auto; scrollbar-width:none; }
+.bottom-bar::-webkit-scrollbar { display:none; }
+.nav-pill { flex-shrink:0; padding:8px 16px; border-radius:20px; font-size:13px; border:1px solid transparent; background:transparent; color:var(--text-soft); cursor:pointer; font-family:inherit; transition:all 0.2s; white-space:nowrap; }
+.nav-pill.active { background:var(--text); color:white; }
+.nav-pill:hover:not(.active) { background:rgba(31,45,34,0.06); }
+@media(max-width:480px){ .nav-pill { padding:7px 12px; font-size:12px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="date-small" id="date-small"></div>
+    <div class="greeting" id="greeting-text"></div>
+  </div>
+
+  <!-- HOY -->
+  <div class="section visible" id="sec-today">
+    <div class="four-col" id="four-col"></div>
+
+    <div class="bottom-section">
+      <div class="info-card">
+        <div class="info-title" id="tmr-title">Mañana</div>
+        <div id="tmr-list"></div>
+      </div>
+      <div class="info-card">
+        <div class="info-title" id="weather-title">El tiempo mañana</div>
+        <div id="weather-content"><div class="weather-loading">Cargando...</div></div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Frase del día</div>
+          <div id="quote-content" style="font-family:'DM Serif Display',serif;font-size:13px;font-style:italic;color:var(--text-muted);line-height:1.55;">Cargando...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESCANSO -->
+    <button class="descanso-btn" onclick="descansarHoy()">Hoy necesito descansar un poco</button>
+
+    <!-- NOTAS RÁPIDAS -->
+    <div class="notes-card">
+      <div class="notes-label">Apunta algo</div>
+      <textarea class="notes-area" id="notes-area" placeholder="Un pedido, una idea, algo que no quieres olvidar..."></textarea>
+      <button class="save-note-btn" onclick="saveQuickNote()">Guardar en mis notas</button>
+      <div class="notes-saved" id="notes-saved"></div>
+    </div>
+  </div>
+
+  <!-- RECURRENTES -->
+  <div class="section" id="sec-rec">
+    <p style="font-size:14px;color:var(--text-soft);margin-bottom:1rem;line-height:1.6;">Las tareas que se repiten cada semana se añaden solas. No tienes que acordarte.</p>
+    <div class="rec-list" id="rec-list"></div>
+    <button class="btn-primary" onclick="openModal('recurrente')" style="width:auto;padding:11px 24px;">+ Nueva tarea recurrente</button>
+  </div>
+
+  <!-- CALENDARIO -->
+  <div class="section" id="sec-cal">
+    <div class="cal-header">
+      <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+      <div class="cal-month-label" id="cal-month-label"></div>
+      <button class="cal-nav" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="day-events-card">
+      <div class="day-ev-title" id="day-ev-title">Selecciona un día</div>
+      <div id="day-ev-list"></div>
+    </div>
+    <div style="margin-top:1rem;">
+      <button class="btn-primary" onclick="openModal('evento')" style="width:auto;padding:11px 24px;">+ Añadir evento</button>
+    </div>
+  </div>
+
+  <!-- NOTAS -->
+  <div class="section" id="sec-notes">
+    <div class="notes-section-header">
+      <div>
+        <div class="notes-header-label">Notas</div>
+        <div class="notes-header-quote" id="notes-header-quote">Cargando...</div>
+      </div>
+      <button class="note-fab" onclick="openNoteModal()">+ Nueva</button>
+    </div>
+    <div class="note-items-grid" id="notes-list"></div>
+  </div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="note-modal-backdrop" id="note-modal-backdrop" onclick="if(event.target===this)closeNoteModal()">
+  <div class="note-modal">
+    <div class="note-modal-title">Nueva nota</div>
+    <textarea class="note-modal-area" id="note-modal-area" placeholder="Escribe lo que quieras guardar..."></textarea>
+    <div style="display:flex;gap:8px;margin-top:1rem;">
+      <button class="btn-ghost" onclick="closeNoteModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveNewNote()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <button class="nav-pill active" id="bbot-today" onclick="switchTo('today')">Hoy</button>
+  <button class="nav-pill" id="bbot-rec" onclick="switchTo('rec')">Recurrentes</button>
+  <button class="nav-pill" id="bbot-cal" onclick="switchTo('cal')">Calendario</button>
+  <button class="nav-pill" id="bbot-notes" onclick="switchTo('notes')">Notas</button>
+  <button class="nav-pill" onclick="openExport()" style="color:var(--text-muted);">Datos</button>
+  <div onclick="showStreakToast(parseInt(document.getElementById('streak-num').textContent))" style="flex-shrink:0;display:flex;align-items:center;gap:4px;padding:7px 12px;cursor:pointer;border-radius:20px;" onmouseover="this.style.background='rgba(31,45,34,0.06)'" onmouseout="this.style.background='transparent'">
+    <span style="font-size:14px;line-height:1;">🌿</span><span id="streak-num" style="font-size:13px;font-weight:500;color:var(--text-soft);">1</span>
+  </div>
+</div>
+
+<button class="fab" id="fab" onclick="toggleFab()">+</button>
+
+<!-- MODAL AÑADIR -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this)closeModalDirect()">
+  <div class="modal">
+    <div class="modal-title">Añadir</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchModalTab('tarea')">Tarea de hoy</button>
+      <button class="modal-tab" onclick="switchModalTab('recurrente')">Recurrente</button>
+      <button class="modal-tab" onclick="switchModalTab('evento')">Evento</button>
+    </div>
+    <div class="modal-section visible" id="ms-tarea">
+      <div class="field"><label>¿Qué tienes que hacer?</label><input type="text" id="t-text" placeholder="Escribe aquí..." /></div>
+      <div class="field"><label>Categoría</label>
+        <select id="t-cat">
+          <option value="pedidos">📦 Pedidos</option>
+          <option value="materiales">🧵 Materiales</option>
+          <option value="hogar">🏡 Hogar</option>
+          <option value="familia">🌸 Familia</option>
+        </select>
+      </div>
+      <div class="field"><label>Hora (opcional)</label><input type="time" id="t-time" /></div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeModalDirect()">Cancelar</button>
+        <button class="btn-primary" onclick="addTask()">Añadir</button>
+      </div>
+    </div>
+    <div class="modal-section" id="ms-recurrente">
+      <div class="field"><label>¿Qué tarea?</label><input type="text" id="r-text" placeholder="Ej: Revisar pedidos pendientes" /></div>
+      <div class="field"><label>Categoría</label>
+        <select id="r-cat">
+          <option value="pedidos">📦 Pedidos</option>
+          <option value="materiales">🧵 Materiales</option>
+          <option value="hogar">🏡 Hogar</option>
+          <option value="familia">🌸 Familia</option>
+        </select>
+      </div>
+      <div class="field"><label>Hora (opcional)</label><input type="time" id="r-time" /></div>
+      <div class="field">
+        <label>Días de la semana</label>
+        <div class="days-row">
+          <button class="day-chip" data-d="1">L</button>
+          <button class="day-chip" data-d="2">M</button>
+          <button class="day-chip" data-d="3">X</button>
+          <button class="day-chip" data-d="4">J</button>
+          <button class="day-chip" data-d="5">V</button>
+          <button class="day-chip" data-d="6">S</button>
+          <button class="day-chip" data-d="0">D</button>
+        </div>
+      </div>
+      <div class="field"><label>Fecha límite (opcional)</label><input type="date" id="r-enddate" /><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Si no pones fecha, se repite indefinidamente</div></div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeModalDirect()">Cancelar</button>
+        <button class="btn-primary" onclick="addRecurring()">Guardar</button>
+      </div>
+    </div>
+    <div class="modal-section" id="ms-evento">
+      <div class="field"><label>¿Qué tienes?</label><input type="text" id="ev-title" placeholder="Ej: Entrega pedido" /></div>
+      <div class="field"><label>Fecha</label><input type="date" id="ev-date" /></div>
+      <div class="field"><label>Hora (opcional)</label><input type="time" id="ev-time" /></div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeModalDirect()">Cancelar</button>
+        <button class="btn-primary" onclick="addEvent()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT -->
+<div class="exp-backdrop" id="exp-backdrop" onclick="if(event.target===this)closeExpDirect()">
+  <div class="exp-modal">
+    <h3>Copia de seguridad</h3>
+    <p>Guarda este texto. Si necesitas recuperar tus datos, pégalo aquí.</p>
+    <textarea id="exp-text" readonly></textarea>
+    <button class="btn-primary" onclick="copyExport()" style="margin-bottom:10px;width:100%;">Copiar</button>
+    <div style="border-top:1px solid var(--border);padding-top:12px;margin-bottom:10px;">
+      <p style="font-size:13px;color:var(--text-soft);margin-bottom:8px;">Restaurar:</p>
+      <textarea id="imp-text" placeholder="Pega aquí tu copia..." style="width:100%;height:80px;font-size:11px;font-family:monospace;border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--cream);color:var(--text);resize:none;outline:none;display:block;margin-bottom:8px;"></textarea>
+      <button class="btn-primary" onclick="importData()" style="width:100%;margin-bottom:8px;">Restaurar</button>
+    </div>
+    <button class="btn-ghost" onclick="closeExpDirect()" style="width:100%;">Cerrar</button>
+  </div>
+</div>
+
+<script>
+const MONTHS_ES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DAYS_ES=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const DAY_NAME=['D','L','M','X','J','V','S'];
+const CAT_LABEL={pedidos:'Pedidos',materiales:'Materiales',hogar:'Hogar',familia:'Familia',event:'Evento'};
+const CAT_ICON={pedidos:'📦',materiales:'🧵',hogar:'🏡',familia:'🌸'};
+const CAT_COLOR={pedidos:'var(--pedidos-dot)',materiales:'var(--materiales-dot)',hogar:'var(--hogar-dot)',familia:'var(--familia-dot)',event:'var(--familia-dot)'};
+
+const WMO={0:'☀️|Despejado',1:'🌤|Casi despejado',2:'⛅|Parcialmente nublado',3:'☁️|Nublado',45:'🌫|Niebla',48:'🌫|Niebla',51:'🌦|Llovizna',53:'🌦|Llovizna',55:'🌧|Llovizna intensa',61:'🌧|Lluvia ligera',63:'🌧|Lluvia',65:'🌧|Lluvia intensa',71:'🌨|Nieve',73:'❄️|Nieve',75:'❄️|Nieve intensa',80:'🌦|Chubascos',81:'🌧|Chubascos',82:'⛈|Chubascos fuertes',95:'⛈|Tormenta',96:'⛈|Tormenta',99:'⛈|Tormenta'};
+function wmo(c){const v=WMO[c]||'🌡|Variable';const p=v.split('|');return{icon:p[0],desc:p[1]};}
+
+let tasks=[],events=[],recurring=[],savedNotes=[];
+function load(){
+  try{tasks=JSON.parse(localStorage.getItem('jami_tasks')||'[]');}catch(e){tasks=[];}
+  try{events=JSON.parse(localStorage.getItem('jami_events')||'[]');}catch(e){events=[];}
+  try{recurring=JSON.parse(localStorage.getItem('jami_recurring')||'[]');}catch(e){recurring=[];}
+  try{savedNotes=JSON.parse(localStorage.getItem('jami_notes')||'[]');}catch(e){savedNotes=[];}
+}
+function save(){
+  try{
+    localStorage.setItem('jami_tasks',JSON.stringify(tasks));
+    localStorage.setItem('jami_events',JSON.stringify(events));
+    localStorage.setItem('jami_recurring',JSON.stringify(recurring));
+    localStorage.setItem('jami_notes',JSON.stringify(savedNotes));
+  }catch(e){}
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function toDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
+const now=new Date();
+let calYear=now.getFullYear(),calMonth=now.getMonth(),selectedDate=toDateStr(now);
+
+function injectRecurring(){
+  const tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
+  [{str:toDateStr(now),dow:now.getDay()},{str:toDateStr(tmr),dow:tmr.getDay()}].forEach(({str,dow})=>{
+    recurring.forEach(r=>{
+      if(r.enddate&&str>r.enddate) return;
+      if(r.days.includes(dow)&&!tasks.some(t=>t.rid===r.id&&t.date===str)){
+        tasks.push({id:Date.now()+Math.random(),text:r.text,cat:r.cat,done:false,date:str,time:r.time||'',rid:r.id});
+      }
+    });
+  });
+  save();
+}
+
+// ─── FRASES DEL DÍA para Jami ─────────────────────────────
+const QUOTES_JAMI=[
+  'Tras cada dificultad viene la facilidad (Corán 94:5). También en el arte, Jami.',
+  'Cada línea que trazas es un susurro de lo que llevas dentro.',
+  'Remy no nació cocinero. Tú tampoco naciste artesana. Las dos lo decidisteis.',
+  'El cuero que moldeas hoy, alguien lo tocará dentro de años sin saber tu nombre. Y aun así, lo sentirá.',
+  'No queréis sino lo que Dios quiere (Corán 81:29). La tuya, y algo más grande.',
+  'Miguel Ángel decía que la escultura ya estaba en el mármol. Lo tuyo ya está en el material. Solo tienes que escucharlo.',
+  'Cada cosa creada con las manos lleva una oración sin palabras.',
+  'Soul nos enseñó que el propósito no está en lo grande. Está en lo que haces con amor cada día.',
+  'Dios es bello y ama la belleza (hadiz del Profeta ﷺ). Lo que tú creas, le agrada.',
+  'Up empieza con una vida entera en cuatro minutos. Tu historia también tiene esa densidad. Y es preciosa.',
+  'Las manos que crean rezan sin saberlo.',
+  'No todo lo que brilla es oro, pero todo lo que tú haces brilla a su manera.',
+  'Junto a la dificultad está la facilidad (Corán 94:6). Mientras tanto, sigue creando.',
+  'Coco nos recuerda que mientras alguien te recuerde, no desapareces. Tu arte te recuerda.',
+  'El arte no pregunta si tienes energía. Pero tú sí puedes preguntártelo. Y parar si hace falta.'
+];
+
+const NOTES_QUOTES_JAMI=[
+  'Las mejores ideas vienen en el momento menos oportuno. Por eso existe esto.',
+  'Anota primero, juzga después. El arte empieza en el borrador.',
+  'Walt Disney empezó con un ratón en un papel. Tú también puedes empezar aquí.',
+  'Cada alma cosecha lo que planta (Corán 74:38). Planta ideas, Jami.'
+];
+
+// ─── COMENTARIOS para Jami ────────────────────────────────
+const JAMI_COMMENTS={
+  task_done:[
+    'Hecho. Woody diría: ¡Hay un amigo en ti, Jami!',
+    'Completada. Así, una puntada a la vez.',
+    'Listo. El universo lo ha visto. Y aprueba.',
+    'Una cosa menos. Tus manos son mágicas, en serio.',
+    'Hecho con amor, como todo lo tuyo. الله يبارك.',
+    'Completado. Pixar tardaría 5 años en animarlo. Tú lo has hecho hoy.',
+    'Una tarea menos. El arte avanza aunque parezca que no.',
+    'Así es, Jami. Paso a paso, como se hace todo lo bonito.',
+    'Listo. نِعْمَ الْعَمَل — Qué buen trabajo.',
+    'Hecho. Miguel Ángel también empezaba por el principio.'
+  ],
+  morning:[
+    'Buenos días, Jami. Que este día traiga algo bonito, inshallah.',
+    'Buenos días. Las manos que crean belleza merecen un buen comienzo.',
+    'Hoy también amanece. Y tú también. Eso es mucho.',
+    'Buenos días. En Ratatouille dicen que cualquiera puede cocinar. Cualquiera puede crear. Tú ya lo sabes.',
+    'Un nuevo día para hacer cosas que duren más que el día.',
+    'La mañana es un regalo de Dios (Corán 81:18). A ver qué haces con él, Jami.'
+  ],
+  overload:[
+    'Hay mucho en la lista. Dory diría: sigue nadando, pero una brazada a la vez.',
+    'Elige las dos cosas más importantes. El resto puede esperar, el arte no desaparece.',
+    'No pasa nada si no llegas a todo. Lo que hagas hoy, será suficiente. Dios es generoso.',
+    'Una cosa a la vez. Hasta Disney tardó años en hacer Bambi.'
+  ],
+  free_tomorrow:[
+    'Mañana libre. Hasta los personajes de Pixar tienen días sin guión.',
+    'Sin planes mañana. El descanso también es un regalo de Dios. Disfrútalo.',
+    'Mañana despejado. Quizás es el día para dibujar algo sin razón.'
+  ],
+  night:[
+    'Buenas noches, Jami. Que la noche sea suave y reparadora.',
+    'El día terminó. Hasta el Hada Madrina de Cenicienta necesita descansar.',
+    'Buenas noches. Mañana hay más material, más ideas, más tú.',
+    'Que descanses. Con el nombre de Dios, a dormir (como enseñó el Profeta ﷺ).'
+  ],
+  descanso:[
+    'Parar también es arte. El espacio en blanco hace que el dibujo respire.',
+    'Descansar no es rendirse. Es lo que hace Pixar entre película y película.',
+    'Tras la dificultad siempre viene la facilidad (Corán 94:5-6). Hoy descansas, mañana creas.',
+    'El lienzo en blanco no desaparece. Sigue ahí cuando vuelvas.',
+    'Escucharte es lo más inteligente que puedes hacer hoy. Dios está contigo, Jami.'
+  ],
+  all_done:[
+    '¡Todo hecho, Jami! Como el final de una peli de Pixar. Con lágrimas de emoción incluidas.',
+    'Lista completa. Gracias a Dios (Alhamdulillah). Te lo mereces, Jami.',
+    'Todo listo. Hoy has sido la protagonista de tu propia historia.',
+    '¡Completado todo! Hasta Elsa estaría orgullosa.',
+    'Todo hecho. Eso es tuyo, Jami. Nadie te lo quita.'
+  ]
+};
+
+function getJamiComment(trigger){
+  const msgs=JAMI_COMMENTS[trigger];
+  if(!msgs) return null;
+  const orderKey='jami_fb_order_'+trigger;
+  let order=[];
+  try{order=JSON.parse(localStorage.getItem(orderKey)||'[]');}catch(e){}
+  if(!order.length) order=[...Array(msgs.length).keys()].sort(()=>Math.random()-0.5);
+  const idx=order.shift();
+  localStorage.setItem(orderKey,JSON.stringify(order));
+  return msgs[idx];
+}
+
+function showToast(msg,duration=9000){
+  let t=document.getElementById('jami-toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='jami-toast';
+    t.style.cssText='position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:#1F2D22;color:#F7F9F5;font-size:14px;padding:13px 22px;border-radius:16px;max-width:360px;width:90%;text-align:center;line-height:1.55;z-index:500;opacity:0;transition:all 0.35s;pointer-events:none;font-family:DM Sans,sans-serif;';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;
+  requestAnimationFrame(()=>{t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';},duration);
+}
+
+// ─── STREAK ──────────────────────────────────────────────
+const STREAK_MSGS={
+  low:['Día {n}. Como Up: todo empieza con un primer paso.','Racha de {n}. Volver es lo más difícil. Ya lo hiciste, Jami.','Dios está con quienes perseveran (Corán 2:153). Llevas {n} día, Jami.'],
+  mid:['¡{n} días seguidos! Tus manos y tu corazón en sintonía.','Una semana casi. Pixar tardó 4 años en hacer Buscando a Nemo. Tú llevas {n} días sin parar.','La constancia es lo más amado por Dios, aunque sea poca (hadiz). Llevas {n} días.'],
+  high:['{n} días. Eso ya es tuyo. Nadie te lo quita.','¡{n} días seguidos, Jami! Eso se llama dedicación con mayúsculas.','¡Gloria a Dios! {n} días seguidos. Qué bonita constancia la tuya, Jami.'],
+  epic:['{n} días. Ya es parte de ti, como el arte.','¡{n} días, Jami! Walt Disney tenía esta misma disciplina. Ahora lo entiendes.','Más de un mes. Gracias a Dios (Alhamdulillah). Qué orgullosa deberías estar de ti misma.']
+};
+function showStreakToast(n){
+  let pool=n<=3?STREAK_MSGS.low:n<=9?STREAK_MSGS.mid:n<=29?STREAK_MSGS.high:STREAK_MSGS.epic;
+  const msg=pool[Math.floor(Math.random()*pool.length)].replace(/{n}/g,n);
+  showToast(msg,10000);
+}
+function updateStreak(){
+  const todayStr=toDateStr(now);
+  const lastOpen=localStorage.getItem('jami_last_open');
+  let streak=parseInt(localStorage.getItem('jami_streak')||'1');
+  let isNew=false;
+  let daysAway=0;
+  if(lastOpen){
+    daysAway=Math.floor((now-new Date(lastOpen))/(1000*60*60*24));
+    if(daysAway===0){
+      // mismo día, no pasa nada
+    } else if(daysAway<=2){
+      // margen de gracia — la racha no se rompe si falta 1-2 días
+      streak+=1; isNew=true;
+    } else {
+      // más de 2 días — reinicia pero con mensaje cariñoso, no de culpa
+      streak=1; isNew=true;
+    }
+  }
+  localStorage.setItem('jami_streak',String(streak));
+  localStorage.setItem('jami_last_open',todayStr);
+  const el=document.getElementById('streak-num');
+  if(el) el.textContent=streak;
+
+  // Mensaje de bienvenida según cuánto tiempo lleva fuera
+  if(daysAway>=3){
+    setTimeout(()=>showWelcomeBack(daysAway), 800);
+  } else if(isNew){
+    setTimeout(()=>showStreakToast(streak), 3000);
+  }
+}
+
+function showWelcomeBack(days){
+  const msgs=[
+    'Cuánto tiempo, Jami. Qué bien que estés aquí. Sin reproches, solo alegría.',
+    'Hola de nuevo. No importa cuántos días. Lo que importa es que has vuelto.',
+    'Bienvenida de vuelta. Dios está con quienes regresan. Y tú has regresado.',
+    'Aquí estás otra vez. Eso es lo único que cuenta ahora mismo.',
+    'Te echábamos de menos. Bueno, la app y todo lo que hay detrás de ella.'
+  ];
+  const msg=msgs[Math.floor(Math.random()*msgs.length)];
+
+  // Mostrar overlay de bienvenida suave
+  let overlay=document.getElementById('welcome-back');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='welcome-back';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(247,249,245,0.97);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;font-family:DM Sans,sans-serif;';
+    overlay.innerHTML=`
+      <div style="font-size:40px;margin-bottom:1.5rem;">🌿</div>
+      <div style="font-family:DM Serif Display,serif;font-size:26px;color:#1F2D22;line-height:1.3;margin-bottom:1rem;font-style:italic;">${msg}</div>
+      <div style="font-size:14px;color:#8AA890;margin-bottom:2rem;line-height:1.6;">Llevas ${days} días sin entrar.<br>No pasa nada. Aquí sigue todo.</div>
+      <button onclick="document.getElementById('welcome-back').remove()" style="background:#1F2D22;color:white;border:none;border-radius:14px;padding:13px 32px;font-family:DM Sans,sans-serif;font-size:15px;cursor:pointer;">Entrar</button>
+    `;
+    document.body.appendChild(overlay);
+  }
+}
+
+// ─── WEATHER ─────────────────────────────────────────────
+async function fetchWeather(){
+  const tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
+  document.getElementById('weather-title').textContent='El tiempo el '+DAYS_ES[tmr.getDay()]+' · Madrid';
+  try{
+    const res=await fetch('https://api.open-meteo.com/v1/forecast?latitude=40.4168&longitude=-3.7038&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&timezone=Europe%2FMadrid&forecast_days=3');
+    if(!res.ok) throw new Error();
+    const data=await res.json();
+    const i=1;
+    const code=data.daily.weathercode[i];
+    const tmax=Math.round(data.daily.temperature_2m_max[i]);
+    const tmin=Math.round(data.daily.temperature_2m_min[i]);
+    const rain=data.daily.precipitation_probability_max[i];
+    const wind=Math.round(data.daily.windspeed_10m_max[i]);
+    const {icon,desc}=wmo(code);
+    let advice=tmax>=28?'Ropa ligera, hace mucho calor':tmax>=22?'Camiseta o ropa ligera':tmax>=16?'Una chaquetita':tmax>=10?'Abrigo':' Abrigo grueso, hace frío';
+    if(rain>=60) advice+=' · Lleva paraguas';
+    document.getElementById('weather-content').innerHTML=`
+      <div class="weather-header"><div class="weather-icon">${icon}</div><div><div class="weather-temp-main">${tmax}°</div><div class="weather-desc">${desc}</div></div></div>
+      <div class="weather-row"><span>Mín / Máx</span><span class="weather-val">${tmin}° / ${tmax}°</span></div>
+      <div class="weather-row"><span>Lluvia</span><span class="weather-val">${rain}%</span></div>
+      <div class="weather-row"><span>Viento</span><span class="weather-val">${wind} km/h</span></div>
+      <div class="weather-advice">👗 ${advice}</div>`;
+  }catch(e){document.getElementById('weather-content').innerHTML='<div class="weather-loading">No se pudo cargar el tiempo</div>';}
+}
+
+function fetchQuote(){
+  const dayOfYear=Math.floor((now-new Date(now.getFullYear(),0,0))/(1000*60*60*24));
+  const q=QUOTES_JAMI[dayOfYear%QUOTES_JAMI.length];
+  document.getElementById('quote-content').textContent=q;
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+function init(){
+  load();injectRecurring();
+  const h=now.getHours();
+  const NOMBRES=['gran artista','princesa de cuento real','la artesana del año','la mejor mamá del mundo','creadora de cosas bonitas','alma de artista','manos de oro','corazón de cuento','la más especial','luz del taller'];
+  const dayOfYear=Math.floor((now-new Date(now.getFullYear(),0,0))/(1000*60*60*24));
+  const nombre=NOMBRES[dayOfYear%NOMBRES.length];
+  const g=h<13?`Buenos días,<br><em>${nombre}</em>`:h<20?`Buenas tardes,<br><em>${nombre}</em>`:`Buenas noches,<br><em>${nombre}</em>`;
+  document.getElementById('greeting-text').innerHTML=g;
+  document.getElementById('date-small').textContent=DAYS_ES[now.getDay()]+', '+now.getDate()+' de '+MONTHS_ES[now.getMonth()];
+  document.getElementById('ev-date').value=toDateStr(now);
+  document.getElementById('notes-area').value='';
+  renderToday();renderTomorrow();renderCal();renderRecurring();renderNotesHeader();
+  fetchWeather();fetchQuote();updateStreak();
+  const triggerGreet=h<13?'morning':h>=21?'night':null;
+  if(triggerGreet) setTimeout(()=>showToast(getJamiComment(triggerGreet)),2000);
+}
+
+function switchTo(tab){
+  ['today','rec','cal','notes'].forEach(t=>{
+    document.getElementById('sec-'+t).classList.toggle('visible',t===tab);
+    const bb=document.getElementById('bbot-'+t);
+    if(bb) bb.classList.toggle('active',t===tab);
+  });
+  if(tab==='notes') renderNotes();
+}
+
+function toggleFab(){document.getElementById('modal-backdrop').classList.contains('open')?closeModalDirect():openModal('tarea');}
+function openModal(tab){document.getElementById('modal-backdrop').classList.add('open');document.getElementById('fab').classList.add('open');switchModalTab(tab);}
+function closeModalDirect(){document.getElementById('modal-backdrop').classList.remove('open');document.getElementById('fab').classList.remove('open');}
+function switchModalTab(tab){
+  ['tarea','recurrente','evento'].forEach(t=>document.getElementById('ms-'+t).classList.toggle('visible',t===tab));
+  document.querySelectorAll('.modal-tab').forEach((b,i)=>b.classList.toggle('active',['tarea','recurrente','evento'][i]===tab));
+}
+document.querySelectorAll('.day-chip').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('sel')));
+
+function addTask(){
+  const text=document.getElementById('t-text').value.trim();
+  if(!text) return;
+  tasks.push({id:Date.now(),text,cat:document.getElementById('t-cat').value,done:false,date:toDateStr(now),time:document.getElementById('t-time').value});
+  document.getElementById('t-text').value='';document.getElementById('t-time').value='';
+  closeModalDirect();save();
+  const todayCount=tasks.filter(t=>t.date===toDateStr(now)&&!t.done).length;
+  if(todayCount>=5) setTimeout(()=>showToast(getJamiComment('overload')),400);
+  renderToday();
+}
+function toggleTask(id){
+  const t=tasks.find(t=>t.id===id);if(t)t.done=!t.done;
+  if(t&&t.done){
+    setTimeout(()=>showToast(getJamiComment('task_done')),300);
+    const todayStr=toDateStr(now);
+    const todayTasks=tasks.filter(t=>t.date===todayStr);
+    if(todayTasks.length>0&&todayTasks.every(t=>t.done)){
+      setTimeout(()=>showToast(getJamiComment('all_done'),10000),4000);
+    }
+  }
+  save();renderToday();
+}
+function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);save();renderToday();}
+
+function renderToday(){
+  const today=toDateStr(now);
+  const cats=['pedidos','materiales','hogar','familia'];
+  let html='';
+  cats.forEach(cat=>{
+    const ct=tasks.filter(t=>t.date===today&&t.cat===cat);
+    const done=ct.filter(t=>t.done).length;
+    html+=`<div class="col-card ${cat}"><div class="col-head"><span class="col-icon">${CAT_ICON[cat]}</span><span class="col-title">${CAT_LABEL[cat]}</span>${ct.length?`<span class="col-count">${done}/${ct.length}</span>`:''}</div><div class="col-body">`;
+    if(!ct.length){html+=`<span class="col-empty">Libre</span>`;}
+    else{ct.forEach(t=>{html+=`<div class="task-item ${t.done?'done-item':''}"><div class="check ${t.done?'done':''}" onclick="toggleTask(${t.id})"></div><div class="task-info"><div class="task-text">${esc(t.text)}</div>${(t.time||t.rid)?`<div class="task-meta">${t.time?`<span class="task-time">${t.time}</span>`:''}${t.rid?'<span class="rec-badge">↺</span>':''}</div>`:''}</div><button class="del-btn" onclick="deleteTask(${t.id})">×</button></div>`;});}
+    html+=`</div></div>`;
+  });
+  document.getElementById('four-col').innerHTML=html;
+  renderTomorrow();
+}
+
+function renderTomorrow(){
+  const tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
+  const tmrStr=toDateStr(tmr);
+  const dayName=DAYS_ES[tmr.getDay()];
+  document.getElementById('tmr-title').textContent='Mañana · '+dayName.charAt(0).toUpperCase()+dayName.slice(1);
+  const all=[...tasks.filter(t=>t.date===tmrStr&&!t.done).map(t=>({text:t.text,cat:t.cat,time:t.time})),...events.filter(e=>e.date===tmrStr).map(e=>({text:e.title,cat:'familia',time:e.time}))];
+  const el=document.getElementById('tmr-list');
+  if(!all.length){
+    el.innerHTML='<div style="font-size:14px;color:var(--text-muted);font-style:italic;">Día libre 🌿</div>';
+    if(!sessionStorage.getItem('jami_free_tmr')){sessionStorage.setItem('jami_free_tmr','1');setTimeout(()=>showToast(getJamiComment('free_tomorrow')),1200);}
+    return;
+  }
+  el.innerHTML=all.slice(0,8).map(i=>`<div class="tmr-item"><div class="tmr-dot ${i.cat}"></div>${i.time?`<span class="tmr-time">${i.time}</span>`:''}<span>${esc(i.text)}</span></div>`).join('');
+}
+
+function descansarHoy(){
+  const msgs=JAMI_COMMENTS.descanso;
+  const todayStr=toDateStr(now);
+  const tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
+  const tmrStr=toDateStr(tmr);
+  const pending=tasks.filter(t=>t.date===todayStr&&!t.done);
+  if(pending.length){pending.forEach(t=>t.date=tmrStr);save();renderToday();renderTomorrow();renderCal();}
+  const msg=msgs[Math.floor(Math.random()*msgs.length)];
+  showToast(msg,10000);
+}
+
+function addRecurring(){
+  const text=document.getElementById('r-text').value.trim();
+  const days=[...document.querySelectorAll('.day-chip.sel')].map(b=>parseInt(b.dataset.d));
+  if(!text||!days.length){alert('Escribe una tarea y elige al menos un día');return;}
+  const enddate=document.getElementById('r-enddate').value||null;
+  const r={id:Date.now(),text,cat:document.getElementById('r-cat').value,time:document.getElementById('r-time').value,days,enddate};
+  recurring.push(r);
+  const tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
+  [{str:toDateStr(now),dow:now.getDay()},{str:toDateStr(tmr),dow:tmr.getDay()}].forEach(({str,dow})=>{
+    if(r.enddate&&str>r.enddate) return;
+    if(days.includes(dow)&&!tasks.some(t=>t.rid===r.id&&t.date===str)) tasks.push({id:Date.now()+Math.random(),text:r.text,cat:r.cat,done:false,date:str,time:r.time,rid:r.id});
+  });
+  document.getElementById('r-text').value='';document.getElementById('r-time').value='';document.getElementById('r-enddate').value='';
+  document.querySelectorAll('.day-chip').forEach(b=>b.classList.remove('sel'));
+  closeModalDirect();save();renderRecurring();renderToday();
+}
+function deleteRecurring(id){recurring=recurring.filter(r=>r.id!==id);tasks=tasks.filter(t=>t.rid!==id);save();renderRecurring();renderToday();}
+function renderRecurring(){
+  const el=document.getElementById('rec-list');
+  if(!recurring.length){el.innerHTML='<div style="font-size:14px;color:var(--text-muted);font-style:italic;margin-bottom:1rem;">Sin tareas recurrentes todavía</div>';return;}
+  el.innerHTML=recurring.map(r=>{
+    const dl=r.days.sort().map(d=>DAY_NAME[d]).join(', ');
+    const endLabel=r.enddate?` · hasta ${r.enddate.slice(8,10)}/${r.enddate.slice(5,7)}/${r.enddate.slice(0,4)}`:'';
+    const expired=r.enddate&&r.enddate<toDateStr(now);
+    return `<div class="rec-item" style="${expired?'opacity:0.4':''}"><div class="rec-dot ${r.cat}"></div><div class="rec-info"><div class="rec-name">${esc(r.text)}${r.time?' · '+r.time:''}${expired?' (finalizada)':''}</div><div class="rec-meta">${CAT_LABEL[r.cat]} · ${dl}${endLabel}</div></div><button class="rec-del" onclick="deleteRecurring(${r.id})">×</button></div>`;
+  }).join('');
+}
+
+function addEvent(){
+  const title=document.getElementById('ev-title').value.trim();
+  const date=document.getElementById('ev-date').value;
+  if(!title||!date) return;
+  events.push({id:Date.now(),title,date,time:document.getElementById('ev-time').value});
+  events.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+  document.getElementById('ev-title').value='';document.getElementById('ev-time').value='';
+  closeModalDirect();save();renderCal();renderTomorrow();renderDayEvents(selectedDate);
+}
+function deleteEvent(id){events=events.filter(e=>e.id!==id);save();renderCal();renderTomorrow();renderDayEvents(selectedDate);}
+
+function getDayDots(){
+  const map={};
+  tasks.forEach(t=>{if(!map[t.date])map[t.date]=new Set();map[t.date].add(t.cat);});
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  for(let d=1;d<=dim;d++){
+    const date=new Date(calYear,calMonth,d);
+    const ds=toDateStr(date);
+    recurring.forEach(r=>{if(r.enddate&&ds>r.enddate)return;if(r.days.includes(date.getDay())){if(!map[ds])map[ds]=new Set();map[ds].add(r.cat);}});
+  }
+  events.forEach(e=>{if(!map[e.date])map[e.date]=new Set();map[e.date].add('event');});
+  return map;
+}
+
+function changeMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCal();}
+function renderCal(){
+  document.getElementById('cal-month-label').textContent=MONTHS_ES[calMonth]+' '+calYear;
+  const grid=document.getElementById('cal-grid');
+  let html=['L','M','X','J','V','S','D'].map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  let startDow=new Date(calYear,calMonth,1).getDay();startDow=startDow===0?6:startDow-1;
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  const prev=new Date(calYear,calMonth,0).getDate();
+  const todayStr=toDateStr(now);
+  const dots=getDayDots();
+  for(let i=0;i<startDow;i++)html+=`<div class="cal-cell other-month">${prev-startDow+1+i}</div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    let cls='cal-cell';
+    if(ds===todayStr)cls+=' today';else if(ds===selectedDate)cls+=' selected';
+    const dayCats=dots[ds]?[...dots[ds]]:[];
+    const dotsHtml=dayCats.slice(0,4).map(cat=>`<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:${ds===todayStr?'rgba(255,255,255,0.7)':CAT_COLOR[cat]||'var(--familia-dot)'};margin:0 1px;"></span>`).join('');
+    html+=`<div class="${cls}" onclick="selectDay('${ds}')">${d}${dayCats.length?`<div style="display:flex;justify-content:center;margin-top:3px;min-height:6px;">${dotsHtml}</div>`:'<div style="min-height:9px;"></div>'}</div>`;
+  }
+  for(let i=1;i<=42-startDow-dim;i++)html+=`<div class="cal-cell other-month">${i}</div>`;
+  grid.innerHTML=html;renderDayEvents(selectedDate);
+}
+function selectDay(ds){selectedDate=ds;document.getElementById('ev-date').value=ds;renderCal();}
+function renderDayEvents(ds){
+  const d=new Date(ds+'T12:00:00');
+  document.getElementById('day-ev-title').textContent=d.getDate()+' de '+MONTHS_ES[d.getMonth()];
+  const dow=d.getDay();
+  const dayTasks=tasks.filter(t=>t.date===ds).map(t=>({type:'task',text:t.text,time:t.time||'',cat:t.cat,id:t.id,rid:t.rid||null}));
+  const injectedRids=new Set(dayTasks.filter(t=>t.rid).map(t=>t.rid));
+  const recTasks=recurring.filter(r=>r.days.includes(dow)&&!(r.enddate&&ds>r.enddate)&&!injectedRids.has(r.id)).map(r=>({type:'recurring',text:r.text,time:r.time||'',cat:r.cat,id:r.id}));
+  const dayEvs=events.filter(e=>e.date===ds).map(e=>({type:'event',text:e.title,time:e.time||'',cat:'event',id:e.id}));
+  const all=[...dayTasks,...recTasks,...dayEvs].sort((a,b)=>{if(!a.time&&!b.time)return 0;if(!a.time)return 1;if(!b.time)return -1;return a.time.localeCompare(b.time);});
+  const el=document.getElementById('day-ev-list');
+  if(!all.length){el.innerHTML='<div style="font-size:14px;color:var(--text-muted);font-style:italic;padding:6px 0;">Sin nada este día 🌿</div>';return;}
+  el.innerHTML=all.map(i=>{
+    const color=CAT_COLOR[i.cat]||'var(--familia-dot)';
+    let del=i.type==='event'?`<button class="ev-del" onclick="deleteEvent(${i.id})">×</button>`:i.type==='task'?`<button class="ev-del" onclick="deleteTask(${i.id})">×</button>`:'<span style="font-size:11px;color:var(--text-muted);padding:0 4px;">↺</span>';
+    return `<div class="ev-row"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;margin-top:3px;"></span><span class="ev-time">${i.time||'—'}</span><span class="ev-name">${esc(i.text)}</span><span style="font-size:11px;color:var(--text-muted);margin-right:4px;">${CAT_LABEL[i.cat]||''}</span>${del}</div>`;
+  }).join('');
+}
+
+// NOTES
+function renderNotesHeader(){
+  const el=document.getElementById('notes-header-quote');
+  if(!el) return;
+  const dayOfYear=Math.floor((now-new Date(now.getFullYear(),0,0))/(1000*60*60*24));
+  el.textContent=NOTES_QUOTES_JAMI[dayOfYear%NOTES_QUOTES_JAMI.length];
+}
+function openNoteModal(){document.getElementById('note-modal-backdrop').classList.add('open');setTimeout(()=>document.getElementById('note-modal-area').focus(),100);}
+function closeNoteModal(){document.getElementById('note-modal-backdrop').classList.remove('open');document.getElementById('note-modal-area').value='';}
+function saveNewNote(){
+  const text=document.getElementById('note-modal-area').value.trim();
+  if(!text) return;
+  savedNotes.unshift({id:Date.now(),text,date:toDateStr(now)});
+  save();closeNoteModal();renderNotes();
+}
+function saveQuickNote(){
+  const area=document.getElementById('notes-area');
+  const text=area.value.trim();
+  if(!text) return;
+  savedNotes.unshift({id:Date.now(),text,date:toDateStr(now)});
+  save();area.value='';
+  const s=document.getElementById('notes-saved');
+  if(s){s.textContent='Guardada ✓';setTimeout(()=>{if(s)s.textContent='';},2500);}
+}
+function deleteNote(id){savedNotes=savedNotes.filter(n=>n.id!==id);save();renderNotes();}
+function renderNotes(){
+  renderNotesHeader();
+  const el=document.getElementById('notes-list');
+  if(!el) return;
+  if(!savedNotes.length){el.innerHTML='<div class="note-empty">Aquí aparecerán tus notas.<br>Usa el campo de abajo para capturar ideas.</div>';return;}
+  el.innerHTML=savedNotes.map(n=>{
+    const d=new Date(n.date+'T12:00:00');
+    const label=DAYS_ES[d.getDay()]+', '+d.getDate()+' de '+MONTHS_ES[d.getMonth()];
+    return `<div class="note-item"><div class="note-item-header"><span class="note-item-date">${label}</span><button class="note-item-del" onclick="deleteNote(${n.id})">×</button></div><div class="note-item-text">${esc(n.text)}</div></div>`;
+  }).join('');
+}
+
+// EXPORT
+function openExport(){document.getElementById('exp-text').value=JSON.stringify({tasks,events,recurring,savedNotes},null,2);document.getElementById('exp-backdrop').classList.add('open');}
+function closeExpDirect(){document.getElementById('exp-backdrop').classList.remove('open');document.getElementById('imp-text').value='';}
+function copyExport(){const ta=document.getElementById('exp-text');ta.select();try{document.execCommand('copy');alert('Copiado');}catch(e){}}
+function importData(){
+  try{
+    const p=JSON.parse(document.getElementById('imp-text').value.trim());
+    if(p.tasks)tasks=p.tasks;if(p.events)events=p.events;if(p.recurring)recurring=p.recurring;if(p.savedNotes)savedNotes=p.savedNotes;
+    save();closeExpDirect();renderToday();renderTomorrow();renderCal();renderRecurring();renderNotes();
+    alert('Datos restaurados');
+  }catch(e){alert('Texto no válido');}
+}
+
+init();
+
+// NOTIFICATIONS
+async function setupNotifications(){
+  if(!('serviceWorker' in navigator)||!('Notification' in window)) return;
+  try{
+    const reg=await navigator.serviceWorker.register('./sw-jami.js');
+    await navigator.serviceWorker.ready;
+    if(Notification.permission==='default'){
+      setTimeout(async()=>{
+        const perm=await Notification.requestPermission();
+        if(perm==='granted'){scheduleWithSW(reg);showToast('¡Notificaciones activadas! Te avisaré cada mañana a las 8:30.',6000);}
+      },4000);
+    }else if(Notification.permission==='granted') scheduleWithSW(reg);
+  }catch(e){}
+}
+function scheduleWithSW(reg){
+  const sw=reg.active||reg.waiting||reg.installing;
+  if(sw) sw.postMessage({type:'SCHEDULE_NOTIFICATION',hour:8,minute:30});
+  else navigator.serviceWorker.ready.then(r=>{if(r.active)r.active.postMessage({type:'SCHEDULE_NOTIFICATION',hour:8,minute:30});});
+}
+setupNotifications();
+</script>
+</body>
+</html>
