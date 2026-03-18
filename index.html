@@ -11,24 +11,40 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cream: #F7F9F5;
+  --cream: #FAF7FF;
   --white: #FFFFFF;
-  --text: #1F2D22;
-  --text-soft: #4A6350;
-  --text-muted: #8AA890;
-  --border: rgba(31,45,34,0.08);
+  --text: #2A1A3E;
+  --text-soft: #5C4478;
+  --text-muted: #9E82BE;
+  --border: rgba(107,95,168,0.18);
 
-  --pedidos-dot: #7BA7C4;
-  --pedidos-bg: #EDF4F9;
+  --pedidos-dot: #9B6FBE;
+  --pedidos-bg: #F3EDF9;
+  --hogar-dot: #7E6FAA;
+  --hogar-bg: #EEEAF6;
+  --familia-dot: #C48EC4;
+  --familia-bg: #F9EDF9;
+  --salat-dot: #6B5FA8;
+  --salat-bg: #EDEAF6;
+  --dhikr-dot: #A87EB8;
+  --dhikr-bg: #F5EDF9;
   --materiales-dot: #B8A46E;
   --materiales-bg: #F9F5EC;
-  --hogar-dot: #8FBA8A;
-  --hogar-bg: #EEF5ED;
-  --familia-dot: #C48FA0;
-  --familia-bg: #F9EEF2;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans', sans-serif; color: var(--text); }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Cg opacity='0.045'%3E%3C!-- Flor 1 --%3E%3Ccircle cx='60' cy='60' r='12' fill='%236B5FA8'/%3E%3Ccircle cx='80' cy='52' r='10' fill='%236B5FA8'/%3E%3Ccircle cx='88' cy='68' r='10' fill='%236B5FA8'/%3E%3Ccircle cx='76' cy='80' r='10' fill='%236B5FA8'/%3E%3Ccircle cx='56' cy='78' r='10' fill='%236B5FA8'/%3E%3Ccircle cx='48' cy='64' r='10' fill='%236B5FA8'/%3E%3Ccircle cx='68' cy='66' r='8' fill='%239B6FBE'/%3E%3C!-- Flor 2 --%3E%3Ccircle cx='240' cy='140' r='10' fill='%236B5FA8'/%3E%3Ccircle cx='256' cy='133' r='9' fill='%236B5FA8'/%3E%3Ccircle cx='263' cy='147' r='9' fill='%236B5FA8'/%3E%3Ccircle cx='253' cy='158' r='9' fill='%236B5FA8'/%3E%3Ccircle cx='238' cy='156' r='9' fill='%236B5FA8'/%3E%3Ccircle cx='232' cy='143' r='9' fill='%236B5FA8'/%3E%3Ccircle cx='248' cy='147' r='7' fill='%23C48EC4'/%3E%3C!-- Flor 3 pequeña --%3E%3Ccircle cx='150' cy='270' r='8' fill='%239B6FBE'/%3E%3Ccircle cx='162' cy='264' r='7' fill='%239B6FBE'/%3E%3Ccircle cx='167' cy='274' r='7' fill='%239B6FBE'/%3E%3Ccircle cx='159' cy='282' r='7' fill='%239B6FBE'/%3E%3Ccircle cx='148' cy='280' r='7' fill='%239B6FBE'/%3E%3Ccircle cx='143' cy='271' r='7' fill='%239B6FBE'/%3E%3Ccircle cx='155' cy='274' r='5' fill='%23C48EC4'/%3E%3C!-- Hoja 1 --%3E%3Cellipse cx='100' cy='160' rx='6' ry='14' fill='%236B5FA8' transform='rotate(-30 100 160)'/%3E%3Cellipse cx='112' cy='168' rx='5' ry='12' fill='%236B5FA8' transform='rotate(20 112 168)'/%3E%3C!-- Hoja 2 --%3E%3Cellipse cx='200' cy='60' rx='5' ry='12' fill='%239B6FBE' transform='rotate(15 200 60)'/%3E%3Cellipse cx='212' cy='52' rx='4' ry='10' fill='%239B6FBE' transform='rotate(-25 212 52)'/%3E%3C!-- Pétalo suelto --%3E%3Cellipse cx='30' cy='200' rx='4' ry='9' fill='%23C48EC4' transform='rotate(40 30 200)'/%3E%3Cellipse cx='280' cy='230' rx='4' ry='9' fill='%236B5FA8' transform='rotate(-20 280 230)'/%3E%3Cellipse cx='180' cy='310' rx='4' ry='8' fill='%239B6FBE' transform='rotate(60 180 310)'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 320px 320px;
+}
+.app { position: relative; z-index: 1; }
 .app { max-width: 860px; margin: 0 auto; padding: 0 0 7rem; }
 
 /* HEADER */
@@ -42,13 +58,13 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 .section.visible { display: block; }
 
 /* 4 COLUMNS */
-.four-col { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
-@media(max-width:720px){ .four-col { grid-template-columns: repeat(2,1fr); } }
-@media(max-width:420px){ .four-col { grid-template-columns: 1fr; } }
+.four-col { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; }
+@media(max-width:800px){ .four-col { grid-template-columns: repeat(3,1fr); } }
+@media(max-width:480px){ .four-col { grid-template-columns: repeat(2,1fr); } }
 
 /* CATEGORY CARDS */
-.col-card { background: var(--white); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; }
-.col-head { padding: 14px 16px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.col-card { background: var(--white); border-radius: 20px; border: 1.5px solid rgba(107,95,168,0.22); overflow: hidden; }
+.col-head { padding: 14px 16px 12px; border-bottom: 1.5px solid rgba(107,95,168,0.15); display: flex; align-items: center; gap: 10px; }
 .col-icon { font-size: 20px; line-height: 1; }
 .col-title { font-size: 13px; font-weight: 500; color: var(--text-soft); flex: 1; }
 .col-count { font-size: 12px; color: var(--text-muted); }
@@ -64,6 +80,8 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 .col-card.materiales .check.done { background: var(--materiales-dot); border-color: var(--materiales-dot); }
 .col-card.hogar    .check.done { background: var(--hogar-dot);    border-color: var(--hogar-dot); }
 .col-card.familia  .check.done { background: var(--familia-dot);  border-color: var(--familia-dot); }
+.col-card.salat    .check.done { background: var(--salat-dot);    border-color: var(--salat-dot); }
+.col-card.dhikr    .check.done { background: var(--dhikr-dot);    border-color: var(--dhikr-dot); }
 .check.done::after { content:''; display:block; width:5px; height:9px; border:2px solid white; border-top:none; border-left:none; transform:rotate(45deg) translateY(-1px); }
 
 .task-info { flex:1; min-width:0; }
@@ -80,7 +98,7 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 .bottom-section { margin-top:1.75rem; display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
 @media(max-width:580px){ .bottom-section { grid-template-columns:1fr; } }
 
-.info-card { background:var(--white); border-radius:18px; border:1px solid var(--border); padding:20px 22px; }
+.info-card { background:var(--white); border-radius:18px; border:1.5px solid rgba(107,95,168,0.22); padding:20px 22px; }
 .info-title { font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:14px; }
 
 /* TOMORROW */
@@ -92,6 +110,8 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 .tmr-dot.materiales{ background:var(--materiales-dot); }
 .tmr-dot.hogar     { background:var(--hogar-dot); }
 .tmr-dot.familia   { background:var(--familia-dot); }
+.tmr-dot.salat     { background:var(--salat-dot); }
+.tmr-dot.dhikr     { background:var(--dhikr-dot); }
 .tmr-time { font-size:12px; color:var(--text-muted); flex-shrink:0; min-width:36px; }
 
 /* WEATHER */
@@ -103,10 +123,18 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 .weather-val { color:var(--text-muted); }
 .weather-advice { font-size:13px; color:var(--text-soft); padding-top:7px; border-top:1px solid var(--border); line-height:1.5; }
 .weather-loading { font-size:13px; color:var(--text-muted); font-style:italic; }
+.prayer-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); font-size:14px; }
+.prayer-row:last-child { border-bottom:none; padding-bottom:0; }
+.prayer-name { color:var(--text-soft); font-weight:500; }
+.prayer-time { color:var(--text); font-weight:500; }
+.prayer-row.next { background:var(--salat-bg); margin:0 -4px; padding:8px 4px; border-radius:8px; border-bottom:none; }
+.prayer-row.next .prayer-name { color:var(--salat-dot); }
+.prayer-row.next .prayer-time { color:var(--salat-dot); }
+.prayer-next-label { font-size:10px; color:var(--salat-dot); letter-spacing:0.04em; text-transform:uppercase; }
 
 /* DESCANSO BUTTON — suave, no de pánico */
-.descanso-btn { display:flex; align-items:center; justify-content:center; width:100%; background:var(--hogar-bg); border:1.5px solid rgba(143,186,138,0.4); border-radius:16px; padding:14px 24px; font-family:'DM Serif Display',serif; font-size:16px; font-style:italic; color:var(--text-soft); cursor:pointer; transition:all 0.2s; margin-top:1.75rem; }
-.descanso-btn:hover { background:#E3EFE2; border-color:rgba(143,186,138,0.7); }
+.descanso-btn { display:flex; align-items:center; justify-content:center; width:100%; background:var(--salat-bg); border:1.5px solid rgba(107,95,168,0.25); border-radius:16px; padding:14px 24px; font-family:'DM Serif Display',serif; font-size:16px; font-style:italic; color:var(--text-soft); cursor:pointer; transition:all 0.2s; margin-top:1.75rem; }
+.descanso-btn:hover { background:#E8E4F5; border-color:rgba(107,95,168,0.5); }
 .descanso-btn:active { transform:scale(0.98); }
 
 /* NOTES */
@@ -129,6 +157,8 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 .rec-dot.materiales{ background:var(--materiales-dot); }
 .rec-dot.hogar     { background:var(--hogar-dot); }
 .rec-dot.familia   { background:var(--familia-dot); }
+.rec-dot.salat     { background:var(--salat-dot); }
+.rec-dot.dhikr     { background:var(--dhikr-dot); }
 .rec-info { flex:1; }
 .rec-name { font-size:14px; color:var(--text); }
 .rec-meta { font-size:11px; color:var(--text-muted); margin-top:2px; }
@@ -145,7 +175,7 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 .cal-cell:hover { background:var(--white); }
 .cal-cell.today { background:var(--text); color:white; font-weight:500; }
 .cal-cell.other-month { color:var(--text-muted); opacity:0.4; }
-.cal-cell.selected:not(.today) { background:rgba(143,186,138,0.18); color:var(--text); }
+.cal-cell.selected:not(.today) { background:rgba(107,95,168,0.12); color:var(--text); }
 .day-events-card { background:var(--white); border-radius:18px; padding:16px; border:1px solid var(--border); margin-top:1.25rem; }
 .day-ev-title { font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px; }
 .ev-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
@@ -158,7 +188,7 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 .notes-section-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; }
 .notes-header-label { font-size:11px; color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:5px; }
 .notes-header-quote { font-family:'DM Serif Display',serif; font-size:18px; color:var(--text); font-style:italic; line-height:1.3; max-width:340px; }
-.note-fab { background:var(--text); color:white; border:none; border-radius:14px; padding:10px 18px; font-family:inherit; font-size:13px; cursor:pointer; flex-shrink:0; margin-left:1rem; margin-top:4px; }
+.note-fab { background:var(--salat-dot); color:white; border:none; border-radius:14px; padding:10px 18px; font-family:inherit; font-size:13px; cursor:pointer; flex-shrink:0; margin-left:1rem; margin-top:4px; }
 .note-items-grid { display:flex; flex-direction:column; gap:10px; }
 .note-item { background:var(--white); border-radius:18px; border:1px solid var(--border); padding:18px 20px; }
 .note-item-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
@@ -210,7 +240,7 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 .exp-modal textarea { width:100%; height:100px; font-size:11px; font-family:monospace; border:1px solid var(--border); border-radius:10px; padding:10px; background:var(--cream); color:var(--text); resize:none; outline:none; margin-bottom:10px; display:block; }
 
 /* BOTTOM BAR */
-.bottom-bar { position:fixed; bottom:0; left:0; right:0; background:rgba(247,249,245,0.96); backdrop-filter:blur(16px); border-top:1px solid var(--border); padding:0.75rem 1rem; display:flex; justify-content:center; align-items:center; gap:6px; z-index:50; overflow-x:auto; scrollbar-width:none; }
+.bottom-bar { position:fixed; bottom:0; left:0; right:0; background:rgba(250,247,255,0.96); backdrop-filter:blur(16px); border-top:1.5px solid rgba(107,95,168,0.25); padding:0.75rem 1rem; display:flex; justify-content:center; align-items:center; gap:6px; z-index:50; overflow-x:auto; scrollbar-width:none; }
 .bottom-bar::-webkit-scrollbar { display:none; }
 .nav-pill { flex-shrink:0; padding:8px 16px; border-radius:20px; font-size:13px; border:1px solid transparent; background:transparent; color:var(--text-soft); cursor:pointer; font-family:inherit; transition:all 0.2s; white-space:nowrap; }
 .nav-pill.active { background:var(--text); color:white; }
@@ -240,6 +270,10 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
         <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
           <div style="font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Frase del día</div>
           <div id="quote-content" style="font-family:'DM Serif Display',serif;font-size:13px;font-style:italic;color:var(--text-muted);line-height:1.55;">Cargando...</div>
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">🕌 Horarios de oración hoy</div>
+          <div id="salat-times"><div class="weather-loading">Cargando...</div></div>
         </div>
       </div>
     </div>
@@ -332,8 +366,9 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
       <div class="field"><label>¿Qué tienes que hacer?</label><input type="text" id="t-text" placeholder="Escribe aquí..." /></div>
       <div class="field"><label>Categoría</label>
         <select id="t-cat">
+          <option value="salat">🕌 Salat</option>
+          <option value="dhikr">📿 Dhikr</option>
           <option value="pedidos">📦 Pedidos</option>
-          <option value="materiales">🧵 Materiales</option>
           <option value="hogar">🏡 Hogar</option>
           <option value="familia">🌸 Familia</option>
         </select>
@@ -348,8 +383,9 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
       <div class="field"><label>¿Qué tarea?</label><input type="text" id="r-text" placeholder="Ej: Revisar pedidos pendientes" /></div>
       <div class="field"><label>Categoría</label>
         <select id="r-cat">
+          <option value="salat">🕌 Salat</option>
+          <option value="dhikr">📿 Dhikr</option>
           <option value="pedidos">📦 Pedidos</option>
-          <option value="materiales">🧵 Materiales</option>
           <option value="hogar">🏡 Hogar</option>
           <option value="familia">🌸 Familia</option>
         </select>
@@ -405,9 +441,9 @@ html, body { min-height: 100%; background: var(--cream); font-family: 'DM Sans',
 const MONTHS_ES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const DAYS_ES=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const DAY_NAME=['D','L','M','X','J','V','S'];
-const CAT_LABEL={pedidos:'Pedidos',materiales:'Materiales',hogar:'Hogar',familia:'Familia',event:'Evento'};
-const CAT_ICON={pedidos:'📦',materiales:'🧵',hogar:'🏡',familia:'🌸'};
-const CAT_COLOR={pedidos:'var(--pedidos-dot)',materiales:'var(--materiales-dot)',hogar:'var(--hogar-dot)',familia:'var(--familia-dot)',event:'var(--familia-dot)'};
+const CAT_LABEL={pedidos:'Pedidos',hogar:'Tareas de casa',familia:'Manada',salat:'Salat',dhikr:'Dhikr',event:'Evento'};
+const CAT_ICON={pedidos:'📦',hogar:'🏡',familia:'🌸',salat:'🕌',dhikr:'📿'};
+const CAT_COLOR={pedidos:'var(--pedidos-dot)',hogar:'var(--hogar-dot)',familia:'var(--familia-dot)',salat:'var(--salat-dot)',dhikr:'var(--dhikr-dot)',event:'var(--familia-dot)'};
 
 const WMO={0:'☀️|Despejado',1:'🌤|Casi despejado',2:'⛅|Parcialmente nublado',3:'☁️|Nublado',45:'🌫|Niebla',48:'🌫|Niebla',51:'🌦|Llovizna',53:'🌦|Llovizna',55:'🌧|Llovizna intensa',61:'🌧|Lluvia ligera',63:'🌧|Lluvia',65:'🌧|Lluvia intensa',71:'🌨|Nieve',73:'❄️|Nieve',75:'❄️|Nieve intensa',80:'🌦|Chubascos',81:'🌧|Chubascos',82:'⛈|Chubascos fuertes',95:'⛈|Tormenta',96:'⛈|Tormenta',99:'⛈|Tormenta'};
 function wmo(c){const v=WMO[c]||'🌡|Variable';const p=v.split('|');return{icon:p[0],desc:p[1]};}
@@ -433,8 +469,30 @@ function toDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart
 const now=new Date();
 let calYear=now.getFullYear(),calMonth=now.getMonth(),selectedDate=toDateStr(now);
 
+// Oraciones fijas — siempre presentes, no editables
+const SALAT_FIJAS=[
+  {id:'fajr',    text:'Fajr',    cat:'salat', time:'05:00'},
+  {id:'dhuhr',   text:'Dhuhr',   cat:'salat', time:'13:30'},
+  {id:'asr',     text:'Asr',     cat:'salat', time:'16:30'},
+  {id:'maghrib', text:'Maghrib', cat:'salat', time:'20:00'},
+  {id:'isha',    text:'Isha',    cat:'salat', time:'21:30'},
+  {id:'dhikr',   text:'Dhikr del día', cat:'dhikr', time:''}
+];
+
 function injectRecurring(){
   const tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
+  const dates=[toDateStr(now), toDateStr(tmr)];
+
+  // Inyectar oraciones fijas
+  dates.forEach(str=>{
+    SALAT_FIJAS.forEach(s=>{
+      if(!tasks.some(t=>t.fixedId===s.id&&t.date===str)){
+        tasks.push({id:Date.now()+Math.random(),text:s.text,cat:s.cat,done:false,date:str,time:s.time,fixedId:s.id});
+      }
+    });
+  });
+
+  // Inyectar recurrentes normales
   [{str:toDateStr(now),dow:now.getDay()},{str:toDateStr(tmr),dow:tmr.getDay()}].forEach(({str,dow})=>{
     recurring.forEach(r=>{
       if(r.enddate&&str>r.enddate) return;
@@ -544,7 +602,7 @@ function showToast(msg,duration=9000){
   if(!t){
     t=document.createElement('div');
     t.id='jami-toast';
-    t.style.cssText='position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:#1F2D22;color:#F7F9F5;font-size:14px;padding:13px 22px;border-radius:16px;max-width:360px;width:90%;text-align:center;line-height:1.55;z-index:500;opacity:0;transition:all 0.35s;pointer-events:none;font-family:DM Sans,sans-serif;';
+    t.style.cssText='position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:#2A1A3E;color:#FAF7FF;font-size:14px;padding:13px 22px;border-radius:16px;max-width:360px;width:90%;text-align:center;line-height:1.55;z-index:500;opacity:0;transition:all 0.35s;pointer-events:none;font-family:DM Sans,sans-serif;';
     document.body.appendChild(t);
   }
   t.textContent=msg;
@@ -616,13 +674,56 @@ function showWelcomeBack(days){
       <div style="font-size:40px;margin-bottom:1.5rem;">🌿</div>
       <div style="font-family:DM Serif Display,serif;font-size:26px;color:#1F2D22;line-height:1.3;margin-bottom:1rem;font-style:italic;">${msg}</div>
       <div style="font-size:14px;color:#8AA890;margin-bottom:2rem;line-height:1.6;">Llevas ${days} días sin entrar.<br>No pasa nada. Aquí sigue todo.</div>
-      <button onclick="document.getElementById('welcome-back').remove()" style="background:#1F2D22;color:white;border:none;border-radius:14px;padding:13px 32px;font-family:DM Sans,sans-serif;font-size:15px;cursor:pointer;">Entrar</button>
+      <button onclick="document.getElementById('welcome-back').remove()" style="background:#6B5FA8;color:white;border:none;border-radius:14px;padding:13px 32px;font-family:DM Sans,sans-serif;font-size:15px;cursor:pointer;">Entrar</button>
     `;
     document.body.appendChild(overlay);
   }
 }
 
 // ─── WEATHER ─────────────────────────────────────────────
+async function fetchPrayerTimes(){
+  try{
+    const today=toDateStr(now);
+    const res=await fetch(`https://api.aladhan.com/v1/timingsByCity/${today}?city=Madrid&country=Spain&method=3`);
+    if(!res.ok) throw new Error();
+    const data=await res.json();
+    const t=data.data.timings;
+    const prayers=[
+      {name:'Fajr',    time:t.Fajr},
+      {name:'Dhuhr',   time:t.Dhuhr},
+      {name:'Asr',     time:t.Asr},
+      {name:'Maghrib', time:t.Maghrib},
+      {name:'Isha',    time:t.Isha}
+    ];
+
+    // Find next prayer
+    const nowMinutes=now.getHours()*60+now.getMinutes();
+    let nextIdx=-1;
+    prayers.forEach((p,i)=>{
+      const [h,m]=p.time.split(':').map(Number);
+      const pMin=h*60+m;
+      if(nextIdx===-1 && pMin>nowMinutes) nextIdx=i;
+    });
+
+    // Update the SALAT_FIJAS times so injected tasks have correct times
+    prayers.forEach(p=>{
+      const sf=SALAT_FIJAS.find(s=>s.text===p.name);
+      if(sf) sf.time=p.time;
+    });
+
+    const el=document.getElementById('salat-times');
+    el.innerHTML=prayers.map((p,i)=>{
+      const isNext=i===nextIdx;
+      return `<div class="prayer-row ${isNext?'next':''}">
+        <span class="prayer-name">${p.name}${isNext?'<br><span class="prayer-next-label">próxima</span>':''}</span>
+        <span class="prayer-time">${p.time}</span>
+      </div>`;
+    }).join('');
+  }catch(e){
+    document.getElementById('salat-times').innerHTML='<div class="weather-loading">No se pudo cargar</div>';
+  }
+}
+
 async function fetchWeather(){
   const tmr=new Date(now);tmr.setDate(tmr.getDate()+1);
   document.getElementById('weather-title').textContent='El tiempo el '+DAYS_ES[tmr.getDay()]+' · Madrid';
@@ -667,7 +768,7 @@ function init(){
   document.getElementById('ev-date').value=toDateStr(now);
   document.getElementById('notes-area').value='';
   renderToday();renderTomorrow();renderCal();renderRecurring();renderNotesHeader();
-  fetchWeather();fetchQuote();updateStreak();
+  fetchWeather();fetchPrayerTimes();fetchQuote();updateStreak();
   const triggerGreet=h<13?'morning':h>=21?'night':null;
   if(triggerGreet) setTimeout(()=>showToast(getJamiComment(triggerGreet)),2000);
 }
@@ -716,14 +817,14 @@ function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);save();renderToday();}
 
 function renderToday(){
   const today=toDateStr(now);
-  const cats=['pedidos','materiales','hogar','familia'];
+  const cats=['salat','dhikr','pedidos','hogar','familia'];
   let html='';
   cats.forEach(cat=>{
     const ct=tasks.filter(t=>t.date===today&&t.cat===cat);
     const done=ct.filter(t=>t.done).length;
     html+=`<div class="col-card ${cat}"><div class="col-head"><span class="col-icon">${CAT_ICON[cat]}</span><span class="col-title">${CAT_LABEL[cat]}</span>${ct.length?`<span class="col-count">${done}/${ct.length}</span>`:''}</div><div class="col-body">`;
     if(!ct.length){html+=`<span class="col-empty">Libre</span>`;}
-    else{ct.forEach(t=>{html+=`<div class="task-item ${t.done?'done-item':''}"><div class="check ${t.done?'done':''}" onclick="toggleTask(${t.id})"></div><div class="task-info"><div class="task-text">${esc(t.text)}</div>${(t.time||t.rid)?`<div class="task-meta">${t.time?`<span class="task-time">${t.time}</span>`:''}${t.rid?'<span class="rec-badge">↺</span>':''}</div>`:''}</div><button class="del-btn" onclick="deleteTask(${t.id})">×</button></div>`;});}
+    else{ct.forEach(t=>{html+=`<div class="task-item ${t.done?'done-item':''}"><div class="check ${t.done?'done':''}" onclick="toggleTask(${t.id})"></div><div class="task-info"><div class="task-text">${esc(t.text)}</div>${(t.time||t.rid)?`<div class="task-meta">${t.time?`<span class="task-time">${t.time}</span>`:''}${t.rid?'<span class="rec-badge">↺</span>':''}</div>`:''}</div>${t.fixedId?'':' <button class="del-btn" onclick="deleteTask('+t.id+')">×</button>'}</div>`;});}
     html+=`</div></div>`;
   });
   document.getElementById('four-col').innerHTML=html;
